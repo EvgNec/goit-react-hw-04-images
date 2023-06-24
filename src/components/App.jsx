@@ -9,6 +9,7 @@ import { Loader } from './Loader';
 import { Button } from './Button';
 import { getImage } from '../api';
 import { Modal } from './Modal';
+import { useState, useEffect } from 'react';
 
 export class App extends Component {
   state = {
