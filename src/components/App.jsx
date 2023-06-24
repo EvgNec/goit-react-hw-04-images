@@ -1,113 +1,87 @@
 import React from 'react';
 import styles from './App.module.css';
-import { Component } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Searchbar } from './Searchbar';
 import { ImageGallery } from './ImageGallery';
 import { Loader } from './Loader';
 import { Button } from './Button';
-import { getImage } from '../api';
+import { getPictures } from '../api';
 import { Modal } from './Modal';
+import { notification } from './Notification/Notification';
+import Error from 'components/Error/Error';
 import { useState, useEffect } from 'react';
 
-export class App extends Component {
-  state = {
-    searchQuery: '',
-    queryResult: [],
-    loading: false,
-    currentPage: 1,
-    isModalOpen: false,
-    modalImage: null,
-    totalQueryResult: 0,
-  };
+export const App = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [pictures, setPictures] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPics, seteTotalPics] = useState(null);
+  const [isModalOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [modalImage, setModalImgSrc] = useState('');
+  const [error, setError] = useState(null);
 
-  componentDidUpdate(prevProps, prevState) {
-    const { currentPage, searchQuery } = this.state;
-    const prevPage = prevState.currentPage;
-    const prevSearchQuery = prevState.searchQuery;
+  useEffect(() => {
+    if (!searchQuery) return;
+    const startFetching = async () => {
+      setLoading(true);
+      try {
+        const { hits, totalHits } = await getPictures(searchQuery, page);
+        setPictures(prevPictures =>
+          page === 1 ? hits : [...prevPictures, ...hits]
+        );
+        seteTotalPics(totalHits);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    startFetching();
+  }, [searchQuery, page]);
 
-    if (prevSearchQuery !== searchQuery || prevPage !== currentPage) {
-      this.setState({ loading: true });
-      this.handleFetch();
+  const handleSerach = searchQueryIncoming => {
+    if (searchQueryIncoming === searchQuery) {
+      notification(
+        `Images of ${searchQueryIncoming} have already been displayed.`
+      );
+      return;
     }
-  }
-
-  handleFormSubmit = searchQuery => {
-    this.setState({ searchQuery, currentPage: 1, queryResult: [] });
+    setSearchQuery(searchQueryIncoming);
+    setPictures([]);
+    setPage(1);
+    seteTotalPics(null);
+    setIsOpen(false);
+    setLoading(true);
+    setModalImgSrc('');
+    setError(null);
   };
-
-  handleFetch = () => {
-    const { currentPage, searchQuery } = this.state;
-
-    getImage(currentPage, searchQuery)
-      .then(images => {
-        if (images.hits.length === 0) {
-          toast.info('Sorry, these images were not found. Please try again.');
-          return;
-        }
-
-        this.setState(prevState => ({
-          queryResult: [...prevState.queryResult, ...images.hits],
-          showBeggin: this.statePage < Math.ceil(images.totalHits / 12),
-          totalQueryResult: images.totalHits,
-        }));
-      })
-      .catch(error => {
-        console.log(error);
-      })
-      .finally(() => this.setState({ loading: false }));
+  const incrementPage = () => setPage(page => page + 1);
+  const onModalClose = () => setIsOpen(false);
+  const onModalOpen = ({ target: { dataset } }) => {
+    setIsOpen(true);
+    setModalImgSrc(dataset.src);
   };
-
-  incrementPage = () => {
-    this.setState(prevState => ({
-      currentPage: prevState.currentPage + 1,
-    }));
-  };
-
-  toggleModal = () => {
-    this.setState(prevState => ({
-      isModalOpen: !prevState.isModalOpen,
-    }));
-  };
-
-  enlargeImage = clickedImage => {
-    this.toggleModal();
-    this.setState({
-      modalImage: clickedImage,
-    });
-  };
-  render() {
-    const {
-      searchQuery,
-      queryResult,
-      loading,
-      isModalOpen,
-      modalImage,
-      totalQueryResult,
-    } = this.state;
-
-    return (
-      <div className={styles.App}>
-        <ToastContainer autoClose={3000} />
-        <Searchbar
-          onSubmit={this.handleFormSubmit}
+  return (
+    <div className={styles.App}>
+      <ToastContainer autoClose={3000} />
+      <Searchbar onSubmit={handleSerach} />
+      {totalPics === 0 && (
+        <Error errorText={'Sorry, nothing has been found at your request'} />
+      )}
+      {pictures.length > 0 && (
+        <ImageGallery images={pictures} onClick={onModalOpen} />
+      )}
+      {isModalOpen && (
+        <Modal
+          largeImageURL={modalImage}
+          onClick={onModalClose}
+          description={searchQuery}
         />
-        {queryResult.length > 0 && (
-          <ImageGallery images={queryResult} openModal={this.enlargeImage} />
-        )}
-        {isModalOpen && (
-          <Modal
-            largeImageURL={modalImage}
-            onClose={this.toggleModal}
-            description={searchQuery}
-          />
-        )}
-        {loading && <Loader />}
-        {queryResult.length > 0 &&
-          queryResult.length !== totalQueryResult &&
-          !loading && <Button onClick={this.incrementPage} />}
-      </div>
-    );
-  }
-}
+      )}
+      {loading && <Loader />}
+      {totalPics / pictures.length > page && <Button onClick={incrementPage} />}
+    </div>
+  );
+};

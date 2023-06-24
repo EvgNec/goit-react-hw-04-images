@@ -2,14 +2,14 @@ import PropTypes from 'prop-types';
 import styles from './ImageGallery.module.css';
 import { ImageGalleryItem } from '../ImageGalleryItem';
 
-export function ImageGallery({ images, openModal }) {
+export function ImageGallery({ images, onClick }) {
   return (
     <ul className={styles.ImageGallery}>
       {images.map(({ id, webformatURL, largeImageURL, tags }) => (
         <ImageGalleryItem
           key={id}
           webImage={webformatURL}
-          openModal={() => openModal(largeImageURL)}
+          onClick={() => onClick(largeImageURL)}
           description={tags}
         />
       ))}
@@ -27,5 +27,5 @@ ImageGallery.propTypes = {
       tags: PropTypes.string.isRequired,
     })
   ),
-  openModal: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
 };

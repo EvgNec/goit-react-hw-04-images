@@ -1,7 +1,7 @@
 const BASE_URL = "https://pixabay.com/api";
 const KEY = "36946759-7e5fc12dbc6128b490595b505";
 
-    export const getImage = async (page, query) => {
+    export const getPictures = async (query, page) => {
      const params = new URLSearchParams({
     image_type: "photo",
          key: KEY,
