@@ -60,6 +60,7 @@ export const App = () => {
   const incrementPage = () => setPage(page => page + 1);
   const onModalClose = () => setIsOpen(false);
   const onModalOpen = ({ target: { dataset } }) => {
+    console.log("target: { dataset }", { target: { dataset } })
     setIsOpen(true);
     setModalImgSrc(dataset.src);
   };

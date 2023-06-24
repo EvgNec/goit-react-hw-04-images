@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styles from './Modal.module.css';
 
 const Modal = ({ largeImageURL, onClick, description }) => {
+  console.log("largeImageURL, onClick, description", largeImageURL, onClick, description)
   const handleBackdropClick = ({ target, currentTarget }) => {
     if (target === currentTarget) onClick();
   };

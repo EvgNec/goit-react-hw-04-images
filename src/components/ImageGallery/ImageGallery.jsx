@@ -4,19 +4,18 @@ import { ImageGalleryItem } from '../ImageGalleryItem';
 
 export function ImageGallery({ images, onClick }) {
   return (
-    <ul className={styles.ImageGallery}>
+    <ul className={styles.ImageGallery} onClick={onClick}>
       {images.map(({ id, webformatURL, largeImageURL, tags }) => (
         <ImageGalleryItem
           key={id}
           webImage={webformatURL}
-          onClick={() => onClick(largeImageURL)}
+          imgModal={largeImageURL}
           description={tags}
         />
       ))}
     </ul>
   );
 }
-
 
 ImageGallery.propTypes = {
   images: PropTypes.arrayOf(
