@@ -6,7 +6,7 @@ import Button from 'components/Button/Button';
 import Modal from 'components/Modal/Modal';
 import { Loader } from 'components/Loader/Loader';
 import { Container } from './App.styled';
-import getPictures from './services/getPictures';
+import getPictures from './Api/getPictures';
 import Error from 'components/Error/Error';
 import { notification } from 'components/Notification/Notification';
 import { useState, useEffect } from 'react';

@@ -1,12 +1,11 @@
 import axios from 'axios';
 
-const BASE_URL = "https://pixabay.com/api";
-const KEY = "36946759-7e5fc12dbc6128b490595b505";
+const BASE_URL = 'https://pixabay.com/api/';
 
 async function getPictures(searchQuery, page) {
   const options = {
     params: {
-      key: KEY,
+      key: '34991535-a7425182e30d9d17c0e128526',
       q: searchQuery,
       image_type: 'photo',
       orientation: 'horizontal',
