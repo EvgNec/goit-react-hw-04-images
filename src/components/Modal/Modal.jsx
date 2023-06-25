@@ -1,41 +1,38 @@
 import { useEffect } from 'react';
+import { ModalWindow, Overlay } from './Modal.styled';
 import PropTypes from 'prop-types';
-import styles from './Modal.module.css';
 
-const Modal = ({ largeImageURL, onClick, description }) => {
-  console.log("largeImageURL, onClick, description", largeImageURL, onClick, description)
-  const handleBackdropClick = ({ target, currentTarget }) => {
-    if (target === currentTarget) onClick();
+const Modal = ({ imgSrc, alt, onClose }) => {
+	const handleOverayClick = ( {target, currentTarget} ) => {
+    if (target === currentTarget) onClose();
   };
 
-  useEffect(() => {
-    const handleKeyDown = ({ code }) => {
-      if (code === 'Escape') onClick();
+ 
+	
+	useEffect(() => {
+		const handleKeyDown = ({ code }) => {
+      if (code === 'Escape') onClose();
     };
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
+		window.addEventListener('keydown', handleKeyDown);
+		
+		return () => {
       window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [onClick]);
+    };	
+	}, [onClose])
 
   return (
-    <div className={styles.Overlay} onClick={handleBackdropClick}>
-      <div>
-        <img
-          className={styles.ModalImage}
-          src={largeImageURL}
-          alt={description}
-          // onClick={e => e.stopPropagation()}
-        />
-      </div>
-    </div>
+    <Overlay onClick={handleOverayClick}>
+      <ModalWindow>
+        <img src={imgSrc} alt={alt} />
+      </ModalWindow>
+    </Overlay>
   );
 };
 
-Modal.propTypes = {
+Modal.proptTypes = {
+  imgSrc: PropTypes.string.isRequired,
+  alt: PropTypes.string,
   onClose: PropTypes.func.isRequired,
-  largeImageURL: PropTypes.string.isRequired,
-  description: PropTypes.string,
 };
+
 export default Modal;

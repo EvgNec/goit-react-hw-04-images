@@ -1,55 +1,50 @@
-import { Component } from 'react';
-import { toast } from 'react-toastify';
+import { useState } from 'react';
+import { notification } from 'components/Notification/Notification';
+import { FcSearch } from 'react-icons/fc';
+import { Form, FormButton, FormInput, Header } from './Searchbar.styled';
 import PropTypes from 'prop-types';
-import styles from './Searchbar.module.css';
-import { IoSearch } from 'react-icons/io5';
 
-export class Searchbar extends Component {
-  state = {
-    searchQery: '',
-  };
 
-  handleSearchQuery = event => {
-    this.setState({ searchQery: event.currentTarget.value.toLowerCase() });
-  };
+const Searchbar = ({onSubmit}) => {
+  const [value, setValue] = useState('');
 
-  handleSubmit = event => {
-    event.preventDefault();
-
-    if (this.state.searchQery.trim() === '') {
-      toast.error('The input field is empty!');
+const	handleChange = ({ target: { value } }) => setValue(value);
+	
+  
+const  handleSubmit = e => {
+    e.preventDefault();
+    if (value === '') {
+      notification(
+        'The search input can not be empty. Please enter a search query'
+      );
       return;
     }
-
-    this.props.onSubmit(this.state.searchQery);
-    this.setState({ searchQery: '' });
+    onSubmit(value.trim().toLowerCase());
+	setValue(value);
   };
 
-  render() {
-    return (
-      <header className={styles.Searchbar} onSubmit={this.handleSubmit}>
-        <form className={styles.SearchForm}>
-          <button type="submit" className={styles['SearchForm-button']}>
-            <span className={styles['SearchForm-button-label']}>Search</span>
-            <IoSearch className={styles['SearchForm-icon']} />
-          </button>
+  return (
+    <Header>
+      <Form type="submit" onSubmit={handleSubmit}>
+        <FormButton>
+          <FcSearch size="30" />
+        </FormButton>
 
-          <input
-            className={styles['SearchForm-input']}
-            type="text"
-            name="searchQuery"
-            value={this.state.searchQery}
-            onChange={this.handleSearchQuery}
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-          />
-        </form>
-      </header>
-    );
-  }
-}
+        <FormInput
+          onChange={handleChange}
+          type="text"
+          autocomplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+          value={value}
+        />
+      </Form>
+    </Header>
+  );
+};
 
 Searchbar.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};
+	onSubmit : PropTypes.func.isRequired,
+}
+
+export default Searchbar;

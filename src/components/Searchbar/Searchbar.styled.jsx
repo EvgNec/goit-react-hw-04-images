@@ -1,4 +1,6 @@
-.Searchbar {
+import styled from "@emotion/styled";
+
+export const Header = styled.header`
   top: 0;
   left: 0;
   position: sticky;
@@ -15,84 +17,47 @@
   color: var(--bg-color);
   background-color: var(--theme-color);
   box-shadow: 0px 2px 5px rgb(0 0 0 / 12%);
-}
-
-.SearchForm {
+`;
+	
+export const Form = styled.form`
   position: relative;
-  margin-right: 24px;
-}
+  margin-right: 0px;
+`;
 
-.SearchForm-button {
+export const FormButton = styled.button`
   position: absolute;
   top: 50%;
-  right: 3px;
+  right: 0px;
   transform: translateY(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border: 0;
   border-radius: 50%;
   background-color: var(--theme-color);
   transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
-}
+  :hover {
+    background-color: var(--theme-color-hover);
+  }
+`;
 
-.SearchForm-button:hover,
-.SearchForm-button:focus {
-  background-color: var(--theme-color-hover);
-}
-
-.SearchForm-button-label {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  clip-path: inset(50%);
-  border: 0;
-}
-
-.SearchForm-input {
+export const FormInput = styled.input`
   display: inline-block;
   padding: 10px 50px 10px 20px;
-  width: 270px;
+  font-size:24px;
+  width: 400px;
   border: 0;
   border-radius: 25px;
   outline: none;
   background-color: var(--bg-color);
   transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.SearchForm-input,
-.SearchForm-input::placeholder {
+  ::placeholder {
   color: var(--text-color);
   font: 16px/3 sans-serif;
   line-height: 1.5;
-}
-
-.SearchForm-icon {
-  width: 25px;
-  height: 25px;
-  color: var(--bg-color);
-  transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@media screen and (min-width: 480px) {
-  .SearchForm-input {
-    width: 300px;
   }
-
-  .SearchForm {
-    margin-right: 0;
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .SearchForm-input {
-    width: 400px;
-  }
-}
+`;

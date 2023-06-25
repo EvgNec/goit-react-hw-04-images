@@ -1,15 +1,14 @@
-import React from 'react';
-import styles from './App.module.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Searchbar } from './Searchbar';
-import { ImageGallery } from './ImageGallery';
-import { Loader } from './Loader';
-import { Button } from './Button';
-import { getPictures } from '../api';
-import { Modal } from './Modal';
-import { notification } from './Notification/Notification';
+import ImageGallery from './ImageGallery/ImageGallery';
+import Searchbar from './Searchbar/Searchbar';
+import Button from 'components/Button/Button';
+import Modal from 'components/Modal/Modal';
+import { Loader } from 'components/Loader/Loader';
+import { Container } from './App.styled';
+import getPictures from './services/getPictures';
 import Error from 'components/Error/Error';
+import { notification } from 'components/Notification/Notification';
 import { useState, useEffect } from 'react';
 
 export const App = () => {
@@ -17,15 +16,15 @@ export const App = () => {
   const [pictures, setPictures] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPics, seteTotalPics] = useState(null);
-  const [isModalOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [modalImage, setModalImgSrc] = useState('');
+  const [modalImgSrc, setModalImgSrc] = useState('');
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (!searchQuery) return;
-    const startFetching = async () => {
-      setLoading(true);
+	useEffect(() => {
+		if (!searchQuery) return;
+	  const startFetching = async () => {
+		 setLoading(true);
       try {
         const { hits, totalHits } = await getPictures(searchQuery, page);
         setPictures(prevPictures =>
@@ -57,32 +56,39 @@ export const App = () => {
     setModalImgSrc('');
     setError(null);
   };
-  const incrementPage = () => setPage(page => page + 1);
+  const onBtnClick = () => setPage(page => page + 1);
   const onModalClose = () => setIsOpen(false);
   const onModalOpen = ({ target: { dataset } }) => {
-    console.log("target: { dataset }", { target: { dataset } })
     setIsOpen(true);
     setModalImgSrc(dataset.src);
   };
+
   return (
-    <div className={styles.App}>
-      <ToastContainer autoClose={3000} />
+    <Container>
       <Searchbar onSubmit={handleSerach} />
+
+      <ImageGallery pictures={pictures} onClick={onModalOpen} />
+
+      {/* for wrong query */}
       {totalPics === 0 && (
         <Error errorText={'Sorry, nothing has been found at your request'} />
       )}
-      {pictures.length > 0 && (
-        <ImageGallery images={pictures} onClick={onModalOpen} />
-      )}
-      {isModalOpen && (
-        <Modal
-          largeImageURL={modalImage}
-          onClick={onModalClose}
-          description={searchQuery}
+      {/* for server error */}
+      {error && (
+        <Error
+          errorText={`Something went wrong... ${error}. Please try again.`}
         />
       )}
+      {/* loader */}
       {loading && <Loader />}
-      {totalPics / pictures.length > page && <Button onClick={incrementPage} />}
-    </div>
+      {/* for displaying load more btn */}
+      {totalPics / pictures.length > page && (
+        <Button onClick={onBtnClick}></Button>
+      )}
+      {/* for displaying modal window */}
+      {isOpen && <Modal imgSrc={modalImgSrc} onClose={onModalClose} />}
+      <ToastContainer />
+    </Container>
   );
 };
+

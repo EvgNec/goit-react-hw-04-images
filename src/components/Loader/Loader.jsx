@@ -1,9 +1,9 @@
+import { Wrapper } from './Loader.styled';
 import { Oval } from 'react-loader-spinner';
-import styles from './Loader.module.css';
 
 export function Loader() {
   return (
-    <div className={styles.Loader}>
+    <Wrapper>
       <Oval
         ariaLabel="loading-indicator"
         height={40}
@@ -12,6 +12,6 @@ export function Loader() {
         color="orange"
         secondaryColor="#ccc"
       />
-    </div>
+    </Wrapper>
   );
 }
